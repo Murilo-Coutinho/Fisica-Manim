@@ -1,0 +1,149 @@
+from manim import *
+from math import *
+
+class Parabola(Scene):
+    def construct(self):
+        linha = Line().move_to(ORIGIN).scale(10).move_to(2*DOWN)
+        ponto = Dot().move_to(ORIGIN+2*DOWN)
+        eixos = Axes().move_to(ORIGIN+1.95*DOWN+0.1*RIGHT).scale(0.72)
+        ponto_copia = ponto.copy()
+
+        #DIREITA
+        parabola_30 = eixos.plot(lambda x: sqrt(3)/3*x-0.01*2/3*10*x**2, color=WHITE, x_range=[0,sqrt(3)*10/2]).next_to(ponto,UR,buff=0)
+        parabola_45 = eixos.plot(lambda x: x-0.01*10*x**2, color=WHITE, x_range=[0,10]).next_to(ponto,UR,buff=0)
+        parabola_60 = eixos.plot(lambda x: sqrt(3)*x-0.01*2*10*x**2, color=WHITE, x_range=[0,sqrt(3)*10/2]).next_to(ponto,UR,buff=0)
+        parabola_75 = eixos.plot(lambda x: tan(5*pi/12)*x-0.01*0.5*10*x**2/(cos(5*pi/12)**2), color=WHITE, x_range=[0,sin(pi/6)*10]).next_to(ponto,UR,buff=0)
+        parabola_traçada_30 = DashedVMobject(parabola_30)
+        parabola_traçada_45 = DashedVMobject(parabola_45)
+        parabola_traçada_60 = DashedVMobject(parabola_60)
+        parabola_traçada_75 = DashedVMobject(parabola_75)
+
+        #PONTOS INTERNOS
+        interseção_75_30 = eixos.get_graph_label(
+            graph=parabola_75,
+            label="",
+            x_val=20*sqrt(3)-30,
+            dot=True,
+            buff=0
+        ).set_color(PURE_BLUE).scale(1.5)
+        interseção_75_60 = eixos.get_graph_label(
+            graph=parabola_60,
+            label="",
+            x_val=5*(sqrt(3)-1),
+            dot=True,
+            buff=0
+        ).set_color(PURE_BLUE).scale(1.5)
+        interseção_75_45 = eixos.get_graph_label(
+            graph=parabola_75,
+            label="",
+            x_val=10-(10/sqrt(3)),
+            dot=True,
+            buff=0
+        ).set_color(PURE_BLUE).scale(1.5)
+        interseção_45_60 = eixos.get_graph_label(
+            graph=parabola_60,
+            label="",
+            x_val=10*(sqrt(3)-1),
+            dot=True,
+            buff=0
+        ).set_color(PURE_BLUE).scale(1.5)
+        
+        #VERTICAL
+        reta = eixos.plot(lambda x: 1,color=WHITE, x_range=[0,5]).scale(0.87).rotate(pi/2).next_to(ponto,UP,buff=0)
+        reta_tracejada = DashedVMobject(reta)
+
+        #ESQUERDA
+        matrix = [[-1, 0], [0, 1]]
+        parabola_30E = parabola_traçada_30.copy()
+        parabola_45E = parabola_traçada_45.copy()
+        parabola_60E = parabola_traçada_60.copy()
+        parabola_75E = parabola_traçada_75.copy()
+        ponto_75_60_E = interseção_75_60.copy().apply_matrix(matrix)
+        ponto_75_45_E = interseção_75_45.copy().apply_matrix(matrix)
+        ponto_75_30_E = interseção_75_30.copy().apply_matrix(matrix)
+        ponto_45_60_E = interseção_45_60.copy().apply_matrix(matrix)
+
+        #ANIMAÇÕES DIREITA
+        self.play(Create(linha))
+        self.play(Create(ponto_copia))
+        self.play(MoveAlongPath(ponto_copia,parabola_30), Create(parabola_traçada_30),rate_func=linear, run_time=1)
+        self.play(ponto_copia.animate.move_to(ponto))
+        self.play(MoveAlongPath(ponto_copia,parabola_45), Create(parabola_traçada_45),rate_func=linear, run_time=sqrt(2))
+        self.play(ponto_copia.animate.move_to(ponto))
+        self.play(MoveAlongPath(ponto_copia,parabola_60), Create(parabola_traçada_60),rate_func=linear, run_time=sqrt(3))
+        self.play(ponto_copia.animate.move_to(ponto))
+        self.play(MoveAlongPath(ponto_copia, parabola_75),Create(parabola_traçada_75), rate_func= linear, run_time=2*np.sin(75*DEGREES))
+        self.play(ponto_copia.animate.move_to(ponto), rate_func=linear, run_time=1)
+        self.play(MoveAlongPath(ponto_copia,reta), Create(reta_tracejada),rate_func=linear, run_time=1)
+        self.play(ponto_copia.animate.move_to(ponto), rate_func=linear, run_time=1)
+
+        #LANÇAMENTOS ESQUERDA
+        self.add(parabola_45E,parabola_30E,parabola_60E)
+        self.play(parabola_30E.animate.apply_matrix(matrix),
+        parabola_45E.animate.apply_matrix(matrix),
+        parabola_60E.animate.apply_matrix(matrix),
+        parabola_75E.animate.apply_matrix(matrix))
+        self.wait()
+
+        #PARABOLA DE SEGURANÇA
+        parabola_seg = eixos.plot(lambda x: 5-x**2/20,color=YELLOW, x_range=[-10,10]).scale(1.02).next_to(ponto,UP,buff=0)
+
+        #PONTOS NA CURVA
+        seg_45 = eixos.get_graph_label(
+            graph=parabola_seg,
+            label="",
+            x_val=10,
+            dot=True,
+            buff=0
+        ).set_color(PURE_RED).scale(1.5)
+        seg_60 =eixos.get_graph_label(
+            graph=parabola_seg,
+            label="",
+            x_val=10/sqrt(3),
+            dot=True,
+            buff=0
+        ).set_color(PURE_RED).scale(1.5)
+        seg_75 =eixos.get_graph_label(
+            graph=parabola_seg,
+            label="",
+            x_val=10*(2-sqrt(3)),
+            dot=True,
+            buff=0
+        ).set_color(PURE_RED).scale(1.5)
+        seg_90 =eixos.get_graph_label(
+            graph=parabola_seg,
+            label="",
+            x_val=-0.16,
+            dot=True,
+            buff=0
+        ).set_color(PURE_RED).scale(1.5)
+        #AGORA NA ESQUERDA
+        seg_45_E = seg_45.copy().apply_matrix(matrix)
+        seg_60_E = seg_60.copy().apply_matrix(matrix)
+        seg_75_E = seg_75.copy().apply_matrix(matrix)
+
+        #ANIMAÇÃO PS
+        self.play(Create(parabola_seg))
+
+        #ANIMAÇÃO PONTOS NA PARABOLA DE SEGURANÇA
+        self.play(Create(seg_45), Flash(seg_45))
+        self.play(Indicate(parabola_traçada_45, color=PINK))
+        self.play(Create(seg_60), Flash(seg_60))
+        self.play(Indicate(parabola_traçada_60, color=PINK))
+        self.play(Create(seg_75), Flash(seg_75))
+        self.play(Indicate(parabola_traçada_75, color=PINK))
+        self.play(Create(seg_90), Flash(seg_90))
+        self.play(Indicate(reta_tracejada, color=PINK))
+        self.play(Create(seg_45_E), Create(seg_60_E), Create(seg_75_E))
+        
+        self.play(FadeOut(seg_45,seg_75_E,seg_45_E,seg_60,seg_60_E,seg_75,seg_90))
+
+        #ANIMAÇÃO PONTOS INTERNOS
+        self.play(Create(interseção_45_60), Flash(interseção_45_60))
+        self.play(Indicate(parabola_traçada_45, color=PINK), Indicate(parabola_traçada_60, color=RED))
+        self.play(Create(interseção_75_30), Flash(interseção_75_30))
+        self.play(Indicate(parabola_traçada_75, color=PINK), Indicate(parabola_traçada_30, color=RED))
+        self.play(Create(interseção_75_45), Flash(interseção_75_45))
+        self.play(Create(interseção_75_60), Flash(interseção_75_60))
+        self.play(Create(ponto_75_60_E),Create(ponto_75_45_E),Create(ponto_75_30_E),Create(ponto_45_60_E))
+        self.play(Indicate(parabola_seg))
