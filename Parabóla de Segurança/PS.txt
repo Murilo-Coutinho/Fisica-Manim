@@ -3,12 +3,17 @@ from math import *
 
 class Parabola(Scene):
     def construct(self):
+        
+        #AQUI ESTOU SETANDO EM QUAL PARTE DA TELA FICOU MAIS APROPRIADO PARA O MEU INTERESSE
+        #O PONTO COPIA VAI SER O NOSSO PONTO MÓVEL, ENQUANTO O O PONTO SERVE COMO ÂNCORA DE POSIÇÃO
         linha = Line().move_to(ORIGIN).scale(10).move_to(2*DOWN)
         ponto = Dot().move_to(ORIGIN+2*DOWN)
         eixos = Axes().move_to(ORIGIN+1.95*DOWN+0.1*RIGHT).scale(0.72)
         ponto_copia = ponto.copy()
 
         #DIREITA
+        #AQUI PODERIA USAR A EQUAÇÃO DE MOVIMENTO Y(X) E COLOCAR OS ANGULOS AO VEZ DOS VALORES DE TANGENTE E COSSENO, FICARIA MAIS
+        #EXPLICITO PARA O LEITOR, ACABEI QUE NÃO FIZ ASSIM, SOMENTE O ULTIMO DE 75º GRAUS
         parabola_30 = eixos.plot(lambda x: sqrt(3)/3*x-0.01*2/3*10*x**2, color=WHITE, x_range=[0,sqrt(3)*10/2]).next_to(ponto,UR,buff=0)
         parabola_45 = eixos.plot(lambda x: x-0.01*10*x**2, color=WHITE, x_range=[0,10]).next_to(ponto,UR,buff=0)
         parabola_60 = eixos.plot(lambda x: sqrt(3)*x-0.01*2*10*x**2, color=WHITE, x_range=[0,sqrt(3)*10/2]).next_to(ponto,UR,buff=0)
@@ -53,6 +58,8 @@ class Parabola(Scene):
         reta_tracejada = DashedVMobject(reta)
 
         #ESQUERDA
+        #ESSA MATRIX É BASICAMENTE UMA MATRIX DE ESPELHAMENTO POR ASSIM DIZER, ATÉ ENTÃO NÃO CONHEÇO
+        #UMA FUNÇÃO QUE FAÇA O QUE ESSA MATRIX FAZ, ENTÃO USEI MATEMÁTICA MESMO
         matrix = [[-1, 0], [0, 1]]
         parabola_30E = parabola_traçada_30.copy()
         parabola_45E = parabola_traçada_45.copy()
@@ -64,6 +71,9 @@ class Parabola(Scene):
         ponto_45_60_E = interseção_45_60.copy().apply_matrix(matrix)
 
         #ANIMAÇÕES DIREITA
+        #OS "RUNTIMES" EU QUIS UTILIZAR O MESMO TEMPO QUE DE FATO DEMORA O TRAJETO PERCORRIDO
+        #POR MAIS QUE ESTEJA COMO MOVIMENTO LINEAR (O QUE SABEMOS QUE NÃO É)
+        #PREFERI MANTER A VERACIDADE QUANTO AO TEMPO
         self.play(Create(linha))
         self.play(Create(ponto_copia))
         self.play(MoveAlongPath(ponto_copia,parabola_30), Create(parabola_traçada_30),rate_func=linear, run_time=1)
@@ -86,6 +96,7 @@ class Parabola(Scene):
         self.wait()
 
         #PARABOLA DE SEGURANÇA
+        #AJUSTE DE ESCALA PARA FICAR CONDIZENTE COM O QUE SABEMOS SOBRE A PARABÓLA DE SEGURANÇA
         parabola_seg = eixos.plot(lambda x: 5-x**2/20,color=YELLOW, x_range=[-10,10]).scale(1.02).next_to(ponto,UP,buff=0)
 
         #PONTOS NA CURVA
@@ -117,6 +128,7 @@ class Parabola(Scene):
             dot=True,
             buff=0
         ).set_color(PURE_RED).scale(1.5)
+        
         #AGORA NA ESQUERDA
         seg_45_E = seg_45.copy().apply_matrix(matrix)
         seg_60_E = seg_60.copy().apply_matrix(matrix)
